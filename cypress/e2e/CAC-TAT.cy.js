@@ -38,7 +38,7 @@ describe('Central de Atendimento ao Cliente TAT', () => {
   })
 
 
-  it.only('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', ()=>{
+  it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', ()=>{
     cy.get('#firstName').type('João');
     cy.get('#lastName').type('Castro');
     cy.get('#email').type('joaocastro@email.com');
@@ -127,7 +127,11 @@ it('marca cada tipo de atendimento', ()=>{
     })
 })
 
-it.only('marca ambos checkboxes, depois desmarca o último', ()=>{
+
+
+//////////////// Marcando inputs do tipo checkbox
+
+it('marca ambos checkboxes, depois desmarca o último', ()=>{
   cy.get('input[type="checkbox"]')
       .as('checks')
       .check()
@@ -136,5 +140,36 @@ it.only('marca ambos checkboxes, depois desmarca o último', ()=>{
       .uncheck()
       .should('not.be.checked')   
 })
+
+
+//////////////// Fazendo upload de arquivos com Cypress
+
+it('seleciona um arquivo da pasta fixtures', () => {
+  cy.get('#file-upload').selectFile('cypress/fixtures/example.json')
+  .should( input =>{
+      expect(input[0].files[0].name).to.equal('example.json')
+  })
+})
+
+it('seleciona um arquivo simulando um drag-and-drop', () => {
+  cy.get('#file-upload').selectFile('cypress/fixtures/example.json', {action: "drag-drop"})
+      .should(input =>{
+            expect(input[0].files[0].name).to.equal('example.json')
+  })
+})
+
+it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
+  cy.fixture('example.json').as('simpleFile')
+  cy.get('#file-upload').selectFile('@simpleFile')
+  .should( input =>{
+      expect(input[0].files[0].name).to.equal('example.json')
+  })
+})
+
+it('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', ()=> {
+  cy.contains('a','Política de Privacidade')
+    .should('have.attr', 'target', '_blank')
+})
+
 
 })
